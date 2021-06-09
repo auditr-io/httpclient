@@ -9,9 +9,7 @@ import (
 )
 
 var (
-	transports     = make(map[string]http.RoundTripper)
-	transportsSync sync.Mutex
-
+	// DefaultHTTPClientSettings contains reasonable default settings.
 	DefaultHTTPClientSettings = &HTTPClientSettings{
 		Connect:          2 * time.Second,
 		ExpectContinue:   1 * time.Second,
@@ -22,6 +20,9 @@ var (
 		ResponseHeader:   2 * time.Second,
 		TLSHandshake:     2 * time.Second,
 	}
+
+	transports     = make(map[string]http.RoundTripper)
+	transportsSync sync.Mutex
 )
 
 // HTTPClientSettings defines the HTTP setting for clients
