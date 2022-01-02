@@ -17,8 +17,8 @@ var (
 		ConnKeepAlive:    30 * time.Second,
 		MaxAllIdleConns:  100,
 		MaxHostIdleConns: runtime.GOMAXPROCS(0) + 1,
-		ResponseHeader:   2 * time.Second,
-		TLSHandshake:     2 * time.Second,
+		ResponseHeader:   4 * time.Second,
+		TLSHandshake:     4 * time.Second,
 	}
 
 	transports     = make(map[string]http.RoundTripper)
