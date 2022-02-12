@@ -20,7 +20,8 @@ func TestNewClient_ReusesTransport(t *testing.T) {
 	for i := 0; i < expectedClients; i++ {
 		go func(n int) {
 			defer wg.Done()
-			client, err := NewClient("https://auditr.io", nil, nil)
+			// unique host to avoid cached transport clash between tests
+			client, err := NewClient("https://"+t.Name()+".auditr.io", nil, nil)
 			assert.NoError(t, err)
 			clients[n] = client
 		}(i)
@@ -56,7 +57,8 @@ func TestNewClient_WithSettings(t *testing.T) {
 		go func(n int) {
 			defer wg.Done()
 			client, err := NewClient(
-				"https://auditr.io",
+				// unique host to avoid cached transport clash between tests
+				"https://"+t.Name()+"auditr.io",
 				tr,
 				nil,
 			)
@@ -82,14 +84,16 @@ func TestNewClient_WithHeader(t *testing.T) {
 
 	m := &testmock.MockTransport{
 		RoundTripFn: func(m *testmock.MockTransport, req *http.Request) (*http.Response, error) {
-			assert.Equal(t, expectedHeader["Authorization"], req.Header["Authorization"])
+			assert.Equal(t, expectedHeader["Authorization"][0], req.Header.Get("Authorization"))
+
 			return &http.Response{
 				StatusCode: 200,
 			}, nil
 		},
 	}
 
-	url := "https://auditr.io"
+	// unique host to avoid cached transport clash between tests
+	url := "https://" + t.Name() + "auditr.io"
 	client, err := NewClient(
 		url,
 		m,
@@ -98,4 +102,5 @@ func TestNewClient_WithHeader(t *testing.T) {
 	assert.NoError(t, err)
 	req, _ := http.NewRequest(http.MethodGet, url, nil)
 	client.Do(req)
+
 }
